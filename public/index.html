@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SocratiK</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <h1>SocratiK</h1>
+  <p>Plataforma de diagnóstico cognitivo y aprendizaje basado en el error.</p>
+  <p id="estado">Verificando conexión...</p>
+
+  <script>
+    fetch('/api/health')
+      .then(r => r.json())
+      .then(data => {
+        document.getElementById('estado').textContent =
+          `Servidor: ok · Base de datos: ${data.db}`;
+      })
+      .catch(() => {
+        document.getElementById('estado').textContent = 'No se pudo conectar al servidor.';
+      });
+  </script>
+</body>
+</html>
