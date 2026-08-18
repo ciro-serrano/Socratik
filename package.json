@@ -6,7 +6,9 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server/index.js",
-    "dev": "node --watch server/index.js"
+    "dev": "node --watch server/index.js",
+    "migrate": "node server/db/migrate.js",
+    "seed": "node server/db/seed.js"
   },
   "dependencies": {
     "express": "^4.19.2",

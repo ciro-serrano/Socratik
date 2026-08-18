@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SocratiK - Diagnóstico</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <header>
+      <h1>SocratiK</h1>
+      <p class="subtitulo">Diagnóstico de tu razonamiento</p>
+    </header>
+
+    <main>
+      <div id="ejecucionBox" class="caja-enunciado">
+        <strong>Ejecución (sintaxis/runtime):</strong>
+        <p id="ejecucionTexto"></p>
+      </div>
+
+      <h2>¿Dónde se rompió el razonamiento?</h2>
+      <div id="pasosBox"></div>
+
+      <div id="preguntaBox" class="pregunta-guia" hidden>
+        <strong>Para pensar:</strong>
+        <p id="preguntaTexto"></p>
+      </div>
+
+      <button id="btnDesafio">
+        Ir al desafío para confirmar que aprendiste
+      </button>
+      <button id="btnVolver" style="background: #888; margin-left: 0.5rem">
+        Volver a intentar
+      </button>
+    </main>
+
+    <script src="js/diagnostico.js"></script>
+  </body>
+</html>

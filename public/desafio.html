@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SocratiK - Desafío</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <header>
+      <h1>SocratiK</h1>
+      <p class="subtitulo">Micro-desafío: confirmemos que lo entendiste</p>
+    </header>
+
+    <main>
+      <div id="cargando">
+        <p>Generando un ejercicio nuevo sobre el mismo concepto...</p>
+      </div>
+
+      <div id="contenidoDesafio" hidden>
+        <div class="caja-enunciado">
+          <strong>Nuevo enunciado:</strong>
+          <p id="enunciadoGemelo"></p>
+        </div>
+
+        <label for="codigoGemelo">Tu solución:</label>
+        <textarea
+          id="codigoGemelo"
+          placeholder="Escribí tu código acá..."
+        ></textarea>
+
+        <button id="btnValidar">Validar mi solución</button>
+
+        <div id="resultadoBox" hidden>
+          <p id="resultadoTitulo"></p>
+          <p id="resultadoFeedback"></p>
+          <button id="btnContinuar" hidden>Continuar</button>
+          <button
+            id="btnReintentar"
+            hidden
+            style="background: #888; margin-left: 0.5rem"
+          >
+            Volver a intentar
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/desafio.js"></script>
+  </body>
+</html>

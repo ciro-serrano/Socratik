@@ -1,26 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SocratiK</title>
-  <link rel="stylesheet" href="css/estilos.css">
-</head>
-<body>
-  <h1>SocratiK</h1>
-  <p>Plataforma de diagnóstico cognitivo y aprendizaje basado en el error.</p>
-  <p id="estado">Verificando conexión...</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SocratiK</title>
+    <link rel="stylesheet" href="css/estilos.css" />
+  </head>
+  <body>
+    <header>
+      <h1>SocratiK</h1>
+      <p class="subtitulo">
+        Plataforma de diagnóstico cognitivo y aprendizaje basado en el error.
+      </p>
+    </header>
 
-  <script>
-    fetch('/api/health')
-      .then(r => r.json())
-      .then(data => {
-        document.getElementById('estado').textContent =
-          `Servidor: ok · Base de datos: ${data.db}`;
-      })
-      .catch(() => {
-        document.getElementById('estado').textContent = 'No se pudo conectar al servidor.';
-      });
-  </script>
-</body>
+    <main>
+      <label for="selectEjercicio">Elegí un ejercicio:</label>
+      <select id="selectEjercicio"></select>
+
+      <div id="enunciadoBox" class="caja-enunciado" hidden>
+        <strong>Enunciado:</strong>
+        <p id="enunciadoTexto"></p>
+      </div>
+
+      <label for="codigo">Tu intento de solución:</label>
+      <textarea id="codigo" placeholder="Escribí tu código acá..."></textarea>
+
+      <button id="btnEnviar">Analizar mi intento</button>
+
+      <p id="mensajeEstado" class="mensaje-estado"></p>
+    </main>
+
+    <script src="js/inicio.js"></script>
+  </body>
 </html>
