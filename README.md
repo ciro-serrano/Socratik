@@ -1,38 +1,66 @@
 # SocratiK
 
-Plataforma de diagnóstico cognitivo y aprendizaje basado en el error — Proyecto final CoderCup IA.
+**Plataforma de diagnóstico cognitivo y aprendizaje basado en el error.**
+Proyecto final — CoderCup IA (Coderhouse).
 
-## Etapa 1: correrlo en tu compu (antes de tocar Render)
+🔗 **Demo en vivo:** [pegá acá tu URL de Render]
 
-1. Instalá las dependencias:
-   ```
-   npm install
-   ```
+## El problema
 
-2. Copiá el archivo de variables de entorno:
-   ```
-   cp .env.example .env
-   ```
+Los estudiantes de programación copian soluciones (de compañeros, de tutoriales, de la
+propia IA) sin entender por qué su código original fallaba. Aprenden a resolver un
+ejercicio puntual, pero no corrigen el error de razonamiento — así que lo repiten en el
+próximo.
 
-3. Por ahora, para probar el servidor SIN base de datos todavía, podés dejar
-   `DATABASE_URL` vacío — el endpoint `/api/health` va a marcar error de DB,
-   pero el servidor va a levantar igual. Eso es esperado en este punto.
+## La solución
 
-4. Arrancá el servidor:
-   ```
-   npm run dev
-   ```
+SocratiK invierte la lógica habitual de "te doy la respuesta": el alumno sube su intento
+de solución, y en vez de corregirlo, **le muestra dónde se rompió su razonamiento**, paso
+a paso, sin nunca darle el código correcto. Después le propone un ejercicio "gemelo" —
+mismo concepto, distinto contexto — para confirmar que entendió de verdad, no que memorizó
+una corrección.
 
-5. Abrí `http://localhost:3000` en el navegador. Deberías ver la página de
-   SocratiK con el mensaje de estado (probablemente diciendo que no hay DB
-   conectada todavía — normal, lo resolvemos en el próximo paso).
+El nombre es un homenaje al método mayéutico de Sócrates: enseñar preguntando, no
+respondiendo.
 
-## Próximos pasos (los vamos armando juntos)
+## Cómo funciona (flujo)
 
-- [ ] Crear la base de datos Postgres en Render y correr `server/db/schema.sql`
-- [ ] Conseguir la API key de Gemini
-- [ ] Armar el endpoint de diagnóstico (recibe código → Piston → Gemini → respuesta)
-- [ ] Armar el endpoint del desafío gemelo
-- [ ] Completar las pantallas del frontend
-- [ ] Deploy en Render
-- [ ] AGENTS.md
+1. **Inicio** → el alumno elige un ejercicio y escribe su intento de solución
+2. **Diagnóstico** → el código corre en un sandbox y Gemini identifica el punto exacto
+   del error de razonamiento (marcado con ✅/⚠️), cerrando con una pregunta guía
+3. **Desafío gemelo** → un ejercicio nuevo sobre el mismo concepto, para validar el
+   aprendizaje en el momento
+4. **Resultado** → cierre del ciclo, listo para practicar con otro ejercicio
+
+## Stack
+
+| Capa                 | Tecnología                      |
+| -------------------- | ------------------------------- |
+| Backend              | Node.js + Express               |
+| Base de datos        | PostgreSQL (Render)             |
+| IA                   | Gemini API                      |
+| Sandbox de ejecución | Módulo `vm` nativo de Node.js   |
+| Frontend             | HTML / CSS / JavaScript vanilla |
+| Hosting              | Render                          |
+
+## Correrlo en local
+
+```bash
+npm install
+cp .env.example .env   # completar con tu DATABASE_URL y GEMINI_API_KEY
+npm run migrate        # crea las tablas
+npm run seed            # carga un ejercicio de prueba
+npm run dev
+```
+
+Abrir `http://localhost:3000`.
+
+## Roadmap futuro
+
+- Rol docente con un dashboard de "puntos ciegos" de la clase (qué error de razonamiento
+  se repite más entre los alumnos)
+- Soporte de otras materias/lenguajes además de programación en JavaScript
+
+## Créditos
+
+Desarrollado por Ciro Serrano para la CoderCup IA de Coderhouse (agosto 2026).
