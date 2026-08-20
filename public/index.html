@@ -23,6 +23,31 @@
         <p id="enunciadoTexto"></p>
       </div>
 
+      <div id="formPersonalizado" hidden>
+        <label for="conceptoPersonalizado"
+          >¿Qué concepto querés practicar?</label
+        >
+        <select id="conceptoPersonalizado">
+          <option value="loops">Loops / bucles</option>
+          <option value="condicionales">Condicionales</option>
+          <option value="recursividad">Recursividad</option>
+          <option value="arrays">Arrays</option>
+          <option value="strings">Strings</option>
+        </select>
+
+        <label for="nivelPersonalizado">Nivel:</label>
+        <select id="nivelPersonalizado">
+          <option value="basico">Básico</option>
+          <option value="intermedio">Intermedio</option>
+          <option value="avanzado">Avanzado</option>
+        </select>
+
+        <button id="btnGenerarEjercicio" type="button">
+          Generar ejercicio con IA
+        </button>
+        <p id="mensajeGenerando" class="mensaje-estado"></p>
+      </div>
+
       <label for="codigo">Tu intento de solución:</label>
       <textarea id="codigo" placeholder="Escribí tu código acá..."></textarea>
 

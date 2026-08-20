@@ -1,6 +1,11 @@
 const selectEjercicio = document.getElementById("selectEjercicio");
 const enunciadoBox = document.getElementById("enunciadoBox");
 const enunciadoTexto = document.getElementById("enunciadoTexto");
+const formPersonalizado = document.getElementById("formPersonalizado");
+const conceptoPersonalizado = document.getElementById("conceptoPersonalizado");
+const nivelPersonalizado = document.getElementById("nivelPersonalizado");
+const btnGenerarEjercicio = document.getElementById("btnGenerarEjercicio");
+const mensajeGenerando = document.getElementById("mensajeGenerando");
 const codigoInput = document.getElementById("codigo");
 const btnEnviar = document.getElementById("btnEnviar");
 const mensajeEstado = document.getElementById("mensajeEstado");
@@ -12,20 +17,36 @@ async function cargarEjercicios() {
   try {
     const res = await fetch("/api/ejercicios");
     ejercicios = await res.json();
-
-    if (ejercicios.length === 0) {
-      mensajeEstado.textContent = "Todavía no hay ejercicios cargados.";
-      return;
-    }
-
-    selectEjercicio.innerHTML = ejercicios
-      .map((ej) => `<option value="${ej.id}">${ej.titulo}</option>`)
-      .join("");
-
-    mostrarEnunciado();
+    reconstruirSelect();
+    actualizarVistaSegunSeleccion();
   } catch (err) {
     mensajeEstado.textContent = "No se pudo conectar con el servidor.";
   }
+}
+
+function reconstruirSelect(idSeleccionar) {
+  const opciones = ejercicios.map(
+    (ej) => `<option value="${ej.id}">${ej.titulo}</option>`,
+  );
+  opciones.push(
+    '<option value="custom">Otro (generar uno nuevo con IA)</option>',
+  );
+  selectEjercicio.innerHTML = opciones.join("");
+  if (idSeleccionar) {
+    selectEjercicio.value = idSeleccionar;
+  }
+}
+
+function actualizarVistaSegunSeleccion() {
+  if (selectEjercicio.value === "custom") {
+    enunciadoBox.hidden = true;
+    formPersonalizado.hidden = false;
+    formPersonalizado.classList.add("fade-in");
+    return;
+  }
+
+  formPersonalizado.hidden = true;
+  mostrarEnunciado();
 }
 
 function mostrarEnunciado() {
@@ -35,12 +56,61 @@ function mostrarEnunciado() {
   if (!ejercicio) return;
   enunciadoTexto.textContent = ejercicio.enunciado;
   enunciadoBox.hidden = false;
+  enunciadoBox.classList.remove("fade-in");
+  void enunciadoBox.offsetWidth; // fuerza el reinicio de la animación
+  enunciadoBox.classList.add("fade-in");
 }
 
-selectEjercicio.addEventListener("change", mostrarEnunciado);
+selectEjercicio.addEventListener("change", actualizarVistaSegunSeleccion);
+
+// Generar un ejercicio nuevo con IA a partir del concepto/nivel elegidos
+btnGenerarEjercicio.addEventListener("click", async () => {
+  btnGenerarEjercicio.disabled = true;
+  mensajeGenerando.textContent = "Generando ejercicio...";
+  mensajeGenerando.classList.add("cargando-pulso");
+
+  try {
+    const res = await fetch("/api/ejercicios/generar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        concepto: conceptoPersonalizado.value,
+        nivel: nivelPersonalizado.value,
+      }),
+    });
+
+    const nuevoEjercicio = await res.json();
+
+    if (!res.ok) {
+      mensajeGenerando.textContent =
+        nuevoEjercicio.error || "No se pudo generar el ejercicio.";
+      mensajeGenerando.classList.remove("cargando-pulso");
+      btnGenerarEjercicio.disabled = false;
+      return;
+    }
+
+    ejercicios.push(nuevoEjercicio);
+    reconstruirSelect(nuevoEjercicio.id);
+    actualizarVistaSegunSeleccion();
+
+    mensajeGenerando.textContent = "";
+    mensajeGenerando.classList.remove("cargando-pulso");
+  } catch (err) {
+    mensajeGenerando.textContent = "No se pudo conectar con el servidor.";
+    mensajeGenerando.classList.remove("cargando-pulso");
+  } finally {
+    btnGenerarEjercicio.disabled = false;
+  }
+});
 
 // Enviar el intento y pasar a la Pantalla 2 (diagnóstico)
 btnEnviar.addEventListener("click", async () => {
+  if (selectEjercicio.value === "custom") {
+    mensajeEstado.textContent =
+      "Primero generá un ejercicio con el botón de arriba.";
+    return;
+  }
+
   const codigo = codigoInput.value.trim();
 
   if (!codigo) {
@@ -52,6 +122,7 @@ btnEnviar.addEventListener("click", async () => {
   btnEnviar.disabled = true;
   mensajeEstado.textContent =
     "Analizando tu razonamiento... (puede tardar unos segundos)";
+  mensajeEstado.classList.add("cargando-pulso");
 
   try {
     const res = await fetch("/api/diagnostico", {
@@ -67,15 +138,16 @@ btnEnviar.addEventListener("click", async () => {
 
     if (!res.ok) {
       mensajeEstado.textContent = data.error || "Ocurrió un error.";
+      mensajeEstado.classList.remove("cargando-pulso");
       btnEnviar.disabled = false;
       return;
     }
 
-    // Guardamos el resultado para que la Pantalla 2 lo lea, y navegamos
     sessionStorage.setItem("ultimoDiagnostico", JSON.stringify(data));
     window.location.href = "diagnostico.html";
   } catch (err) {
     mensajeEstado.textContent = "No se pudo conectar con el servidor.";
+    mensajeEstado.classList.remove("cargando-pulso");
     btnEnviar.disabled = false;
   }
 });

@@ -198,8 +198,60 @@ Resultado de ejecutarlo: ${resultadoEjecucion.exitoso ? "Corrió sin errores" : 
   };
 }
 
+async function generarEjercicioNuevo({ concepto, nivel }) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Falta GEMINI_API_KEY en el .env");
+  }
+
+  const promptSistema = `Sos un diseñador de ejercicios de programación en JavaScript para
+estudiantes. Creá un ejercicio original, claro y autocontenido.
+
+Formato de respuesta esperado (texto plano, sin markdown):
+TITULO: [título corto, 3-6 palabras]
+ENUNCIADO: [el enunciado completo, autocontenido y claro]
+SOLUCION_REFERENCIA: [código de referencia correcto en JavaScript, para uso interno, nunca se lo mostrás al alumno]`;
+
+  const promptUsuario = `
+Concepto a practicar: ${concepto}
+Nivel: ${nivel}
+`;
+
+  const response = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: promptSistema }] },
+      contents: [{ role: "user", parts: [{ text: promptUsuario }] }],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Gemini respondió con error ${response.status}: ${errorBody}`,
+    );
+  }
+
+  const data = await response.json();
+  const texto = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
+
+  const tituloMatch = texto.match(/TITULO:\s*(.*)/);
+  const enunciadoMatch = texto.match(
+    /ENUNCIADO:\s*([\s\S]*?)SOLUCION_REFERENCIA:/,
+  );
+  const solucionMatch = texto.match(/SOLUCION_REFERENCIA:\s*([\s\S]*)/);
+
+  return {
+    titulo: tituloMatch ? tituloMatch[1].trim() : `Ejercicio de ${concepto}`,
+    enunciado: enunciadoMatch ? enunciadoMatch[1].trim() : texto.trim(),
+    solucionReferencia: solucionMatch ? solucionMatch[1].trim() : "",
+  };
+}
+
 module.exports = {
   generarDiagnostico,
   generarDesafioGemelo,
   validarDesafioGemelo,
+  generarEjercicioNuevo,
 };

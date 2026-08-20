@@ -33,7 +33,9 @@ router.post("/", async (req, res) => {
     // 3. Pedirle el diagnóstico a Gemini
     const diagnostico = await generarDiagnostico({
       enunciado: ejercicio.enunciado,
-      solucionReferencia: ejercicio.solucion_referencia,
+      solucionReferencia:
+        ejercicio.solucion_referencia ||
+        "No se proporcionó una solución de referencia; inferí vos el comportamiento esperado a partir del enunciado.",
       codigoAlumno: codigo,
       resultadoEjecucion,
     });

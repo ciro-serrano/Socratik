@@ -12,6 +12,7 @@ const btnReintentar = document.getElementById("btnReintentar");
 let desafioId = null;
 
 async function generarDesafio() {
+  cargando.classList.add("cargando-pulso");
   const dataGuardada = sessionStorage.getItem("ultimoDiagnostico");
   if (!dataGuardada) {
     cargando.textContent =
@@ -39,6 +40,7 @@ async function generarDesafio() {
 
     cargando.hidden = true;
     contenidoDesafio.hidden = false;
+    contenidoDesafio.classList.add("fade-in");
   } catch (err) {
     cargando.textContent = "No se pudo conectar con el servidor.";
   }
@@ -60,6 +62,7 @@ btnValidar.addEventListener("click", async () => {
     const data = await res.json();
 
     resultadoBox.hidden = false;
+    resultadoBox.classList.add("fade-in");
 
     if (data.correcto) {
       resultadoTitulo.textContent =

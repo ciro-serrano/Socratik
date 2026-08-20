@@ -39,13 +39,14 @@ function mostrarResultado(data) {
 
   if (lineasPaso.length === 0) {
     // Si el modelo no respetó el formato exacto, mostramos el texto crudo igual
-    pasosBox.innerHTML = `<p>${bloquePasos.replace("PASOS:", "").trim()}</p>`;
+    pasosBox.innerHTML = `<p class="fade-in">${bloquePasos.replace("PASOS:", "").trim()}</p>`;
   } else {
     pasosBox.innerHTML = lineasPaso
-      .map((linea) => {
+      .map((linea, i) => {
         const esAlerta = linea.includes("⚠️");
         const clase = esAlerta ? "paso-alerta" : "paso-ok";
-        return `<div class="diagnostico-paso ${clase}">${linea}</div>`;
+        const delay = (i * 0.25).toFixed(2);
+        return `<div class="diagnostico-paso ${clase} fade-in" style="animation-delay:${delay}s">${linea}</div>`;
       })
       .join("");
   }
@@ -54,6 +55,8 @@ function mostrarResultado(data) {
   if (bloquePregunta && bloquePregunta.trim()) {
     preguntaTexto.textContent = bloquePregunta.trim();
     preguntaBox.hidden = false;
+    preguntaBox.classList.add("fade-in");
+    preguntaBox.style.animationDelay = `${(lineasPaso.length * 0.25 + 0.2).toFixed(2)}s`;
   }
 }
 
