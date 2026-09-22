@@ -3,7 +3,7 @@
 **Plataforma de diagnóstico cognitivo y aprendizaje basado en el error.**
 Proyecto final — CoderCup IA (Coderhouse).
 
-🔗 **Demo en vivo:** [pegá acá tu URL de Render]
+🔗 **Demo en vivo:** [https://socratik.onrender.com/]
 
 ## El problema
 
